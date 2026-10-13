@@ -10,6 +10,7 @@ BACKEND_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BACKEND_DIR / "data"
 
 _DURATION_UNITS = {"s": 1, "m": 60, "h": 3600, "d": 86400}
+DATABASE_URL_ENV_NAMES = ("DATABASE_URL_UNPOOLED", "db_DATABASE_URL_UNPOOLED", "DATABASE_URL", "db_DATABASE_URL")
 
 
 def parse_durations(spec: str) -> list[int]:
@@ -30,7 +31,7 @@ class Settings(BaseSettings):
 
     database_url: str = Field(
         "postgresql://sdr:sdr@localhost:5432/sdr",
-        validation_alias=AliasChoices("DATABASE_URL_UNPOOLED", "DATABASE_URL"),
+        validation_alias=AliasChoices(*DATABASE_URL_ENV_NAMES),
     )
     db_pool_max_size: int = 5
 

@@ -13,7 +13,7 @@
       "functions": {
         "main.py": {
           "maxDuration": 120,
-          "excludeFiles": "{tests/**,evals/**,.venv/**,.pytest_cache/**,.ruff_cache/**}"
+          "excludeFiles": "{tests/**,evals/**,.venv/**,.pytest_cache/**,.ruff_cache/**,data/catalogs/**,data/properties.json}"
         }
       }
     }

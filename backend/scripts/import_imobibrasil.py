@@ -283,6 +283,9 @@ async def import_site(site: str, *, name: str | None, photos: bool, geo: bool, l
                     photo["file"] = str(file.relative_to(target))
                     jobs.append(download_photo(client, photo["url"], file, photo_gate))
             results = await asyncio.gather(*jobs)
+            photos_in_order = [photo for prop in catalog for photo in prop["photos"]]
+            for photo, ok in zip(photos_in_order, results, strict=True):
+                photo["available"] = ok
             print(f"Fotos: {sum(results)}/{len(results)} baixadas")
 
     payload = {

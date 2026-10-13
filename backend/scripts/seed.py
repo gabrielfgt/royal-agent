@@ -40,9 +40,7 @@ def load_catalog() -> list[dict]:
 
 
 def photo_available(photo: dict) -> bool:
-    if not photo.get("file"):
-        return True
-    return (catalog_path().parent / photo["file"]).exists()
+    return photo.get("available", True)
 
 
 def property_row(prop: dict) -> dict:

@@ -1,0 +1,17 @@
+.env
+.env.*
+*.pdf
+.git
+.vercel
+.github
+docs
+backend/.venv
+backend/.pytest_cache
+backend/.ruff_cache
+backend/evals/reports
+backend/data/catalogs/*/fotos
+backend/data/catalogs/*/paginas
+backend/data/catalogs/*/llms.txt
+backend/data/catalogs/*/geocode_cache.json
+web/node_modules
+web/dist
