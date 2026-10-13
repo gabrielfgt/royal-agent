@@ -47,13 +47,19 @@ export function LoginCard({ title = "Painel comercial" }: { title?: string }) {
                 autoComplete="current-password"
                 value={value}
                 onChange={(event) => setValue(event.target.value)}
-                placeholder="ex.: royal-demo"
+                placeholder={import.meta.env.DEV ? "ex.: royal-demo" : "Token do painel"}
                 autoFocus
               />
               {error && <p className="text-sm text-destructive">{error}</p>}
               <p className="text-xs text-muted-foreground">
-                Na demo local o token padrão é <code className="rounded bg-muted px-1">royal-demo</code> (variável
-                DASHBOARD_TOKEN).
+                {import.meta.env.DEV ? (
+                  <>
+                    Na demo local o token padrão é <code className="rounded bg-muted px-1">royal-demo</code> (variável
+                    DASHBOARD_TOKEN).
+                  </>
+                ) : (
+                  "Use o token configurado em DASHBOARD_TOKEN no ambiente publicado."
+                )}
               </p>
             </div>
             <Button type="submit" className="w-full" disabled={pending}>
