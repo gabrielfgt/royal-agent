@@ -26,4 +26,3 @@ web/dist/
 
 /*.pdf
 backend/data/catalogs/
-.env*
