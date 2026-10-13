@@ -1,0 +1,73 @@
+name: royal-sdr
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: sdr
+      POSTGRES_PASSWORD: sdr
+      POSTGRES_DB: sdr
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sdr -d sdr"]
+      interval: 3s
+      retries: 20
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://sdr:sdr@db:5432/sdr
+      CORS_ORIGINS: http://localhost:5173
+    command: >
+      sh -c "python -m scripts.migrate && python -m scripts.seed &&
+             uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: node:22-alpine
+    working_dir: /web
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_PROXY: http://api:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web:/web
+      - /web/node_modules
+    depends_on:
+      - api
+
+  scheduler:
+    image: curlimages/curl:8.11.1
+    env_file: .env
+    entrypoint: >
+      sh -c 'while true; do
+        curl -s -X POST -H "Authorization: Bearer $${CRON_SECRET:-local-cron}" http://api:8000/api/jobs/followups;
+        echo; sleep 60; done'
+    depends_on:
+      - api
+
+  telegram:
+    build: ./backend
+    profiles: ["telegram"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://sdr:sdr@db:5432/sdr
+    command: python -m scripts.telegram_polling
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

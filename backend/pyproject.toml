@@ -1,0 +1,54 @@
+[project]
+name = "royal-sdr"
+version = "0.1.0"
+description = "Agente SDR imobiliário com LangGraph"
+readme = "../README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.140",
+    "uvicorn[standard]>=0.50",
+    "pydantic>=2.12",
+    "pydantic-settings>=2.10",
+    "langgraph>=1.2",
+    "langchain>=1.4",
+    "langchain-openai>=1.6",
+    "langgraph-checkpoint-postgres>=3.1",
+    "psycopg[binary]>=3.3",
+    "psycopg-pool>=3.3",
+    "pgvector>=0.5",
+    "openai>=3.0",
+    "httpx>=0.28",
+    "python-multipart>=0.0.20",
+    "langfuse>=4.10",
+    "tzdata>=2025.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0",
+    "pytest-asyncio>=1.2",
+    "ruff>=0.15",
+]
+
+[tool.uv]
+exclude-newer = "2026-09-28T00:00:00Z"
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.vercel]
+entrypoint = "main:app"
+
+[tool.vercel.scripts]
+build = "python -m scripts.vercel_build"
